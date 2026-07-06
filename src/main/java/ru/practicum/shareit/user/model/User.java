@@ -12,10 +12,10 @@ import java.util.List;
  */
 @Data
 public class User {
-
-    private Long ownersId;
+    private Long id;
     @NotNull
     private String name;
+    @NotNull
     @Email
     private String email;
     private List<Item> itemList;

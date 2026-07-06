@@ -6,8 +6,10 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.*;
 
 @Repository
+
+
 public class ItemRepositoryImpl implements ItemRepository {
-    private final Map<Long, List<Item>> items = new HashMap<>();
+    private static final Map<Long, List<Item>> items = new HashMap<>();
     private static Long id = 0L;
 
     @Override
@@ -31,7 +33,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     public List<Item> getItemsOfOwner(Long userId) {
         return items.values().stream()
                 .flatMap(Collection::stream)
-                .filter(item -> item.getOwner().getOwnersId().equals(userId))
+                .filter(item -> item.getUserId().equals(userId))
                 .toList();
     }
 
@@ -43,6 +45,9 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<Item> getItemsBySearchRequest(String searchRequest) {
 
+        if (searchRequest.isBlank()) {
+            return Collections.emptyList();
+        }
         String searchToLowerCase = searchRequest.toLowerCase(Locale.ROOT);
         return items.values().stream()
                 .flatMap(Collection::stream)
@@ -52,6 +57,12 @@ public class ItemRepositoryImpl implements ItemRepository {
                                 item.getDescription().toLowerCase(Locale.ROOT).contains(searchToLowerCase))
                 .toList();
     }
+
+    @Override
+    public List<Item> getAllItems() {
+        return items.values().stream().flatMap(Collection::stream).toList();
+    }
+
     private static Long setNextId() {
         return id++;
 

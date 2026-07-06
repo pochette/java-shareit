@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import jakarta.validation.constraints.Max;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
@@ -15,5 +16,6 @@ public interface ItemService {
     ItemDto getItemById(Long userId, Long itemId);
 
     List<ItemDto> getItemsBySearchRequest(Long userId, String searchRequest);
+
 
 }

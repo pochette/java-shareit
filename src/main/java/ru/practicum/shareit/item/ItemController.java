@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -14,12 +16,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Slf4j
 public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
     public ItemDto addNewItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                              @RequestBody Item item) {
+                              @Valid @RequestBody Item item) {
+        log.info("POST /items, userId={}, item={}", userId, item);
         return itemService.addNewItem(userId, item);
     }
 
@@ -29,10 +33,10 @@ public class ItemController {
         return itemService.getItemById(userId, itemId);
     }
 
-    @GetMapping("/search{text}")
+    @GetMapping("/search")
     public List<ItemDto> getItemsBySearchRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                 @PathVariable(name = "text") String searchText) {
-        return itemService.getItemsBySearchRequest(userId, searchText);
+                                                 @RequestParam String text) {
+        return itemService.getItemsBySearchRequest(userId, text);
     }
 
     @GetMapping
@@ -46,4 +50,5 @@ public class ItemController {
                               @PathVariable Long itemId) {
         return itemService.updateItem(userId, item, itemId);
     }
+
 }

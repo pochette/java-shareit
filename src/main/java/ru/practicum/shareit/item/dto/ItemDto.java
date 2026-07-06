@@ -11,7 +11,7 @@ import lombok.Data;
 public class ItemDto {
     private Long id;
     private Integer countOfRented;
-    private String title;
+    private String name;
     private String description;
-    private boolean isAvailable;
+    private boolean available;
 }
