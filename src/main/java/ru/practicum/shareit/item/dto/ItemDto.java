@@ -13,5 +13,5 @@ public class ItemDto {
     private Integer countOfRented;
     private String title;
     private String description;
-    private boolean isRented;
+    private boolean isAvailable;
 }

@@ -7,7 +7,7 @@ import java.util.List;
 public interface ItemRepository {
     Item addNewItem(Long userId, Item item);
 
-    Item updateItem (Long userId, Item item);
+    Item updateItem (Long itemId, Item item);
 
     List<Item> getItemsOfOwner(Long userId);
 
