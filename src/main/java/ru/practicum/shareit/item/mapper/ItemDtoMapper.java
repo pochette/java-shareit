@@ -8,10 +8,12 @@ public class ItemDtoMapper {
     public static ItemDto doMap(Item item) {
         return ItemDto.builder()
                 .name(item.getName())
-                .available(item.getAvailable())
+                .status(item.getStatus())
                 .countOfRented(item.getCountOfRented())
+                .available(item.getAvailable())
                 .description(item.getDescription())
                 .id(item.getId())
+                .userId(item.getUser().getId())
                 .build();
     }
 }

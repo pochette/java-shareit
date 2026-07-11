@@ -1,20 +1,31 @@
 package ru.practicum.shareit.item.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.Collection;
 import java.util.List;
 
-public interface ItemRepository {
-    Item addNewItem(Long userId, Item item);
+public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    List<Item> getAllItems();
+    Collection<Item> findAllByUser_Id(Long userId);
 
-    Item getItemById(Long itemId);
+    Collection<Object> findItemsByDescriptionOrNameContainingIgnoreCase(String description, String name);
 
-    List<Item> getItemsBySearchRequest(String searchRequest);
+    Collection<Object> findItemsByDescriptionOrNameContainsIgnoreCase(String description, String name);
 
-    List<Item> getItemsOfOwner(Long userId);
+    @Query("SELECT i " +
+            "FROM Item i " +
+            "WHERE " +
+            "i.available=true and " +
+            "(lower(i.description) LIKE LOWER(CONCAT('%', :searchRequest, '%')) " +
+            "OR LOWER(i.name) LIKE LOWER(CONCAT('%', :searchRequest, '%')))" +
+            " ")
+    List<Item> findItemsBySearchRequest(@Param("searchRequest") String searchRequest);
 
-    Item updateItem(Long itemId, Item item);
+    List<Item> getItemsByDescriptionIsContainingIgnoreCase(String description);
 
 }

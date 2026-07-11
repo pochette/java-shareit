@@ -9,9 +9,17 @@ import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice("ru.practicum.shareit")
 public class ErrorHandler {
+    @ExceptionHandler(ItemNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleItemNotFoundException(ItemNotFoundException e) {
+        return new ErrorResponse("NOT_FOUND", "Вещь не найдена: " + e.getMessage());
+    }
+
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAllUncaughtException(Exception e) {
+
         return new ErrorResponse("INTERNAL_SERVER_ERROR", "Возникла внутренняя ошибка сервера: " + e);
     }
 
