@@ -4,9 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 
@@ -21,6 +23,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.end > :now " +
             "ORDER BY b.start DESC ")
     List<Booking> findCurrentBookings(Long userId, LocalDateTime now);
+
+    Optional<Booking> findFirstByItem_IdAndStatusAndStartAfterOrderByStartAsc(Long id, BookingStatus status, LocalDateTime now);
+
+    Optional<Booking> findFirstByItem_IdAndStatusAndStartBeforeOrderByStartDesc(Long itemId, BookingStatus status, LocalDateTime startBefore);
 
     @Query("select b " +
             "FROM Booking b " +
@@ -40,16 +46,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b " +
             "FROM Booking b " +
             "where b.user.id = :userId " +
-            "AND b.status = REJECTED " +
+            "AND b.status = :status " +
             "ORDER BY b.start DESC ")
-    List<Booking> findRejectedBookings(Long userId);
+    List<Booking> findRejectedBookings(Long userId, BookingStatus status);
 
     @Query("SELECT b " +
             "FROM Booking b " +
             "WHERE b.user.id = :userId " +
-            "and b.status = WAITING " +
+            "and b.status = :status " +
             "ORDER BY b.start DESC")
-    List<Booking> findWaitingBookings(Long userId);
+    List<Booking> findWaitingBookings(Long userId, BookingStatus status);
 
 }
 

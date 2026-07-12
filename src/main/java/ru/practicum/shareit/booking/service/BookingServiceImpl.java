@@ -80,8 +80,8 @@ public class BookingServiceImpl implements BookingService {
             case CURRENT -> result = bookingRepository.findCurrentBookings(userId, now);
             case PAST -> result = bookingRepository.findPastBookings(userId, now);
             case FUTURE -> result = bookingRepository.findFutureBookings(userId, now);
-            case REJECTED -> result = bookingRepository.findRejectedBookings(userId);
-            case WAITING -> result = bookingRepository.findWaitingBookings(userId);
+            case REJECTED -> result = bookingRepository.findRejectedBookings(userId, BookingStatus.REJECTED);
+            case WAITING -> result = bookingRepository.findWaitingBookings(userId, BookingStatus.WAITING);
             default -> throw new UnknownStateException("Неверная поисковый запрос статуса бронирования: " + state);
         }
         return result.stream()
