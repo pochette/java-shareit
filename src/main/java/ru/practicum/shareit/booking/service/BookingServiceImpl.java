@@ -74,7 +74,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getListOfBookingByUser(Long userId, BookingFilterState state) {
-        List<Booking> result = new ArrayList<>();
+        List<Booking> result;
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case ALL -> result = bookingRepository.findBookingsByUser_IdOrderByStartDesc(userId);

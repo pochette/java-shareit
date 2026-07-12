@@ -36,7 +36,7 @@ public class Item {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = true)
+    @Column
     @Enumerated(EnumType.STRING)
     private StatusOfAvailable status;
 
@@ -45,7 +45,7 @@ public class Item {
     private Boolean available;
 
 
-    @Column(nullable = true)
+    @Column
     private Integer countOfRented;
 
 }
