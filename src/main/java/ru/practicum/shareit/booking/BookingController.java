@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.BookingFilterState;
-import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class BookingController {
             @RequestHeader("X-Sharer-User-Id") Long userId,
             @PathVariable Long bookingId,
             @RequestParam(name = "approved") Boolean isApproved) {
-         return bookingService.approvedBookingByOwner(userId, bookingId, isApproved);
+        return bookingService.approvedBookingByOwner(userId, bookingId, isApproved);
 
     }
 

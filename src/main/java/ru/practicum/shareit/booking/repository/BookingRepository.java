@@ -4,16 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-
 
     List<Booking> findBookingsByUser_IdOrderByStartDesc(Long userId);
 
@@ -46,7 +43,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "AND b.status = REJECTED " +
             "ORDER BY b.start DESC ")
     List<Booking> findRejectedBookings(Long userId);
-
 
     @Query("SELECT b " +
             "FROM Booking b " +

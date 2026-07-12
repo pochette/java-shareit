@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -51,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
         if (!booking.getItem().getUser().equals(owner)) {
             throw new ForbiddenOperationException(
                     String.format("Пользователь %d не является собственником вещи %d. ",
-                    userId, booking.getItem().getId()));
+                            userId, booking.getItem().getId()));
         }
 
         booking.setStatus(BookingStatus.APPROVED);
@@ -71,7 +70,6 @@ public class BookingServiceImpl implements BookingService {
                     String.format("Пользователь %d не является собственником вещи %d или субъектом бронирования. ",
                             userId, booking.getItem().getId()));
         }
-
     }
 
     @Override
@@ -85,6 +83,7 @@ public class BookingServiceImpl implements BookingService {
             case FUTURE -> result = bookingRepository.findFutureBookings(userId, now);
             case REJECTED -> result = bookingRepository.findRejectedBookings(userId);
             case WAITING -> result = bookingRepository.findWaitingBookings(userId);
+            default -> throw new UnknownStateException("Неверная поисковый запрос статуса бронирования: " + state);
         }
         return result.stream()
                 .map(BookingMapper::doDto)
@@ -108,7 +107,7 @@ public class BookingServiceImpl implements BookingService {
 
     private static void checkItemAvailable(Item item) {
         if (!item.getAvailable()) {
-            throw new ItemNotAvailableException("Вещь не доступна: " + item.toString());
+            throw new ItemNotAvailableException("Вещь не доступна: " + item);
         }
     }
 

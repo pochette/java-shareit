@@ -12,7 +12,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAllUncaughtException(Exception e) {
 
-        return new ErrorResponse("INTERNAL_SERVER_ERROR", "Возникла внутренняя ошибка сервера: " + e);
+        return new ErrorResponse("INTERNAL_SERVER_ERROR", "Возникла внутренняя ошибка сервера: " + e.getMessage());
     }
 
     @ExceptionHandler(BookingNotFoundException.class)
@@ -24,7 +24,7 @@ public class ErrorHandler {
     @ExceptionHandler(DuplicateEmailException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDuplicateEmailException(DuplicateEmailException e) {
-        return new ErrorResponse("DUPLICATE_EMAIL", "Такой Email уже существует: " + e);
+        return new ErrorResponse("DUPLICATE_EMAIL", "Такой Email уже существует: " + e.getMessage());
     }
 
     @ExceptionHandler(ForbiddenOperationException.class)
@@ -49,7 +49,7 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Произошла ошибка при валидации: " + e);
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Произошла ошибка при валидации: " + e.getMessage());
     }
 
     @ExceptionHandler(UnknownStateException.class)
@@ -62,12 +62,12 @@ public class ErrorHandler {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(UserNotFoundException e) {
-        return new ErrorResponse("USER_NOT_FOUND", "Пользователь не найден или не существует: " + e);
+        return new ErrorResponse("USER_NOT_FOUND", "Пользователь не найден или не существует: " + e.getMessage());
     }
 
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(ValidationException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Произошла ошибка при валидации: " + e);
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Произошла ошибка при валидации: " + e.getMessage());
     }
 }
