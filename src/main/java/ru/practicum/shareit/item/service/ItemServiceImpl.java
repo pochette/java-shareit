@@ -31,7 +31,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto addNewItem(Long userId, Item item) {
 
-        log.info("Adding item '{}' for user {}", item.getName(), userId);
+        log.info("Adding item '{}' for booker {}", item.getName(), userId);
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Попытка обновить вещь у несуществующего пользователя."));
         item.setUser(user);
@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
             updateIfPresent(item.getName(), fromDao::setName);
             updateIfPresent(item.getDescription(), fromDao::setDescription);
             updateIfPresent(item.getAvailable(),fromDao::setAvailable);
-            log.info("Updating item {}, user={}", id, userId);
+            log.info("Updating item {}, booker={}", id, userId);
             return ItemDtoMapper.doMap(itemRepository.save(fromDao));
         } else {
             throw new ForbiddenOperationException("Попытка обновления вещи чужим пользователем ");
