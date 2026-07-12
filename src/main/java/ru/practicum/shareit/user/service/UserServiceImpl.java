@@ -11,8 +11,6 @@ import ru.practicum.shareit.user.mapper.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.function.Consumer;
 
 @Service
@@ -21,17 +19,6 @@ import java.util.function.Consumer;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
-    @Override
-    public UserDto getUserById(Long userId) {
-        log.debug("Получение пользователя с id={}", userId);
-
-        UserDto user = UserDtoMapper.doMap(userRepository.findById((userId)).orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id %d не найден", userId
-        ))));
-
-        log.debug("Пользователь с id={} успешно найден", userId);
-        return user;
-    }
 
     @Transactional
     @Override
@@ -49,16 +36,41 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
+    public void deleteUser(Long userId) {
+        log.info("Удаление пользователя с id={}", userId);
+
+        userRepository.deleteUserById(((userId)));
+
+        log.info("Пользователь с id={} успешно удален", userId);
+    }
+
+    @Override
+    public UserDto getUserById(Long userId) {
+        log.debug("Получение пользователя с id={}", userId);
+
+        UserDto user = UserDtoMapper.doMap(userRepository
+            .findById((userId))
+            .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id %d не найден", userId
+            ))));
+
+        log.debug("Пользователь с id={} успешно найден", userId);
+        return user;
+    }
+
+    @Transactional
+    @Override
     public UserDto updateUser(Long userId, User user) {
         log.info("Обновление пользователя с id={}", userId);
 
-        User oldUser = userRepository.findById(userId).orElseThrow(() ->
+        User oldUser = userRepository
+            .findById(userId)
+            .orElseThrow(() ->
                 new UserNotFoundException(String.format("Пользователь с id %d не найден", user.getId()
                 )));
         updateIfPresent(user.getName(), oldUser::setName);
         updateIfPresent(user.getEmail(), email -> {
             if (!email.equals(oldUser.getEmail()) &&
-                    userRepository.existsUserByEmail(email)) {
+                userRepository.existsUserByEmail(email)) {
                 throw new DuplicateEmailException("Пользователь с этим email уже существует. email: " + email);
             }
             oldUser.setEmail(email);
@@ -68,16 +80,6 @@ public class UserServiceImpl implements UserService {
 
         log.info("Пользователь с id={} успешно обновлен", userId);
         return updatedUser;
-    }
-
-    @Transactional
-    @Override
-    public void deleteUser(Long userId) {
-        log.info("Удаление пользователя с id={}", userId);
-
-        userRepository.deleteUserById(((userId)));
-
-        log.info("Пользователь с id={} успешно удален", userId);
     }
 
     private <T> void updateIfPresent(T value, Consumer<T> setter) {

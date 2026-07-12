@@ -1,42 +1,43 @@
-package ru.practicum.shareit.booking.model;
+package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Getter
 @Setter
+@Getter
 @Entity
-@Table(name = "bookings")
 
-public class Booking {
+@Table(name = "comments")
+
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "start_book", nullable = false)
-    private LocalDateTime start;
-
-    @Column(name = "end_book", nullable = false)
-    private LocalDateTime end;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @NotBlank
+    @Column(nullable = false,
+        length = 1000)
+    private String text;
+
+    @PastOrPresent
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private BookingStatus status;
+    private LocalDateTime created;
 
     @Override
     public final int hashCode() {
@@ -59,7 +60,16 @@ public class Booking {
                 .getHibernateLazyInitializer()
                 .getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Booking booking = (Booking) o;
-        return getId() != null && Objects.equals(getId(), booking.getId());
+        Comment comment = (Comment) o;
+        return getId() != null && Objects.equals(getId(), comment.getId());
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+            "id = " + id + ", " +
+            "item = " + item + ", " +
+            "user = " + user + ", " +
+            "text = " + text + ")";
     }
 }
