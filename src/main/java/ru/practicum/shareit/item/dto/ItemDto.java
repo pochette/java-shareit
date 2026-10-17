@@ -1,17 +1,33 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.practicum.shareit.item.model.StatusOfAvailable;
 
-/**
- * TODO Sprint add-controllers.
- */
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
-@Builder
+@NoArgsConstructor
 public class ItemDto {
+
     private Long id;
+
     private Integer countOfRented;
+
     private String name;
+
     private String description;
-    private boolean available;
+
+    private StatusOfAvailable status;
+
+    private Long userId;
+
+    private Boolean available;
+
+    private LocalDateTime lastBooking;
+
+    private LocalDateTime nextBooking;
+
+    private List<CommentDto> comments;
 }

@@ -13,7 +13,7 @@ public class UserDtoMapper {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
-                .itemDtoList(Optional.ofNullable(user.getItemList())
+                .itemDtoList(Optional.ofNullable(user.getItems())
                         .orElse(Collections.emptyList())
                         .stream()
                         .map(ItemDtoMapper::doMap)
