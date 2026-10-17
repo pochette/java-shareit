@@ -1,375 +1,84 @@
 # ShareIt
 
-> REST API для сервиса аренды вещей между пользователями.
+> REST API сервиса аренды вещей: размещение, поиск, бронирование и отзывы после аренды.
 
-![Java](https://img.shields.io/badge/Java-21-orange)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-brightgreen)
-![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-Hibernate-success)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
-![Maven](https://img.shields.io/badge/Maven-3-red)
-![JUnit5](https://img.shields.io/badge/JUnit-5-green)
-![Mockito](https://img.shields.io/badge/Mockito-5-lightgrey)
-![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED)
+![Java](https://img.shields.io/badge/Java_21-ED8B00?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.3-6DB33F?logo=springboot&logoColor=white)
+![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F?logo=spring&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL_16-4169E1?logo=postgresql&logoColor=white)
+![Mockito](https://img.shields.io/badge/Mockito-78A641)
+![Docker](https://img.shields.io/badge/Docker_Compose-2496ED?logo=docker&logoColor=white)
 
----
+**Русский** · [English](README.en.md)
 
-## 📖 О проекте
+## О проекте
 
-**ShareIt** — это backend-приложение, реализующее сервис аренды вещей между пользователями.
+Бэкенд для шеринга вещей. Владелец размещает вещь, другие пользователи находят её через поиск и бронируют на нужные даты. Владелец подтверждает или отклоняет бронь, а после завершения аренды арендатор может оставить отзыв.
 
-Пользователь может разместить вещь, разрешить другим пользователям бронировать её, подтверждать или отклонять бронирования, а после завершения аренды пользователи могут оставлять отзывы.
+**Ключевые решения:**
 
-Проект разработан в рамках курса **«Java-разработчик» Яндекс Практикума** и полностью построен на стеке Spring Boot.
+- **Бизнес-правила бронирования.** Проверяется доступность вещи. Владелец не может забронировать свою вещь, подтвердить бронь может только он, а просматривать её — только участники сделки. Нарушения возвращаются с понятными статусами ошибок.
+- **Фильтрация по состояниям.** Бронирования арендатора и владельца выбираются по состояниям `ALL`, `CURRENT`, `PAST`, `FUTURE`, `WAITING`, `REJECTED`.
+- **Обогащённые ответы.** Карточка вещи для владельца содержит последнее и ближайшее бронирование, а также отзывы.
+- **Качество кода.** Checkstyle, SpotBugs и JaCoCo подключены в Maven, сервисный слой покрыт юнит-тестами на Mockito.
 
----
+## Стек
 
-# Возможности
+| Область | Технологии |
+| --- | --- |
+| Язык и фреймворк | Java 21, Spring Boot 3.3 (Web, Data JPA, Validation, Actuator) |
+| Данные | PostgreSQL 16, Hibernate; H2 для тестов |
+| Тесты | JUnit 5, Mockito |
+| Качество | Checkstyle, SpotBugs, JaCoCo |
+| Сборка и запуск | Maven, Docker, Docker Compose |
 
-## Пользователи
+## Архитектура
 
-* регистрация пользователей;
-* изменение информации;
-* получение пользователя по ID;
-* просмотр списка пользователей.
-
----
-
-## Вещи
-
-* добавление вещей;
-* изменение информации;
-* получение информации о вещи;
-* получение списка вещей владельца;
-* поиск вещей по названию и описанию.
-
----
-
-## Бронирования
-
-Пользователь может:
-
-* забронировать вещь;
-* отменить бронирование;
-* просматривать свои бронирования;
-* просматривать бронирования своих вещей.
-
-Владелец вещи может:
-
-* подтвердить бронирование;
-* отклонить бронирование.
-
-Поддерживаются состояния:
-
-* ALL
-* CURRENT
-* PAST
-* FUTURE
-* WAITING
-* REJECTED
-
----
-
-## Комментарии
-
-После окончания аренды пользователь может оставить отзыв о вещи.
-
-Комментарии отображаются вместе с информацией о вещи.
-
----
-
-## Запросы вещей
-
-Реализована возможность:
-
-* создавать запросы на вещи;
-* получать собственные запросы;
-* просматривать запросы других пользователей;
-* получать вещи, соответствующие запросу.
-
----
-
-# Используемые технологии
-
-## Backend
-
-* Java 21
-* Spring Boot
-* Spring MVC
-* Spring Data JPA
-* Hibernate
-
-## База данных
-
-* PostgreSQL
-* H2 (для тестирования)
-
-## Инструменты
-
-* Maven
-* Git
-* Docker
-* IntelliJ IDEA
-
-## Тестирование
-
-* JUnit 5
-* Mockito
-* Spring Boot Test
-* MockMvc
-
----
-
-# Архитектура
-
-Проект построен по классической многослойной архитектуре.
+Пакеты разделены по предметным областям, внутри каждой — слои controller → service → repository, а также DTO и мапперы.
 
 ```text
-Controller
-      │
-      ▼
- Service
-      │
-      ▼
-Repository
-      │
-      ▼
- PostgreSQL
+src/main/java/ru/practicum/shareit
+├── user/       # пользователи
+├── item/       # вещи, поиск, комментарии
+├── booking/    # бронирования, статусы и фильтры
+├── request/    # запросы на вещи
+└── exception/  # единая обработка ошибок
 ```
 
-### Основные пакеты
+## Быстрый старт
 
-```text
-src/main/java
-│
-├── controller
-├── dto
-├── mapper
-├── service
-├── repository
-├── model
-├── exception
-├── validation
-├── configuration
-└── util
-```
-
----
-
-# Структура базы данных
-
-Основные сущности:
-
-* User
-* Item
-* Booking
-* Comment
-* ItemRequest
-
-Связи:
-
-* User → Item (OneToMany)
-* User → Booking (OneToMany)
-* Item → Booking (OneToMany)
-* Item → Comment (OneToMany)
-* ItemRequest → Item (OneToMany)
-
----
-
-# REST API
-
-## Пользователи
-
-```http
-POST /users
-GET /users
-GET /users/{id}
-PATCH /users/{id}
-DELETE /users/{id}
-```
-
----
-
-## Вещи
-
-```http
-POST /items
-PATCH /items/{id}
-GET /items/{id}
-GET /items
-GET /items/search
-```
-
----
-
-## Бронирования
-
-```http
-POST /bookings
-PATCH /bookings/{id}
-GET /bookings
-GET /bookings/{id}
-GET /bookings/owner
-```
-
----
-
-## Комментарии
-
-```http
-POST /items/{id}/comment
-```
-
----
-
-## Запросы вещей
-
-```http
-POST /requests
-GET /requests
-GET /requests/all
-GET /requests/{id}
-```
-
----
-
-# Пример JSON
-
-## Создание вещи
-
-```json
-{
-  "name": "Mountain Bike",
-  "description": "Trek Marlin 7",
-  "available": true
-}
-```
-
----
-
-## Создание бронирования
-
-```json
-{
-  "itemId": 12,
-  "start": "2026-08-10T09:00:00",
-  "end": "2026-08-12T18:00:00"
-}
-```
-
----
-
-# Обработка ошибок
-
-Реализована централизованная обработка исключений.
-
-Возвращаются корректные HTTP-коды:
-
-* 400 Bad Request
-* 404 Not Found
-* 409 Conflict
-
----
-
-# Тестирование
-
-Проект содержит:
-
-* модульные тесты сервисного слоя;
-* тесты контроллеров;
-* интеграционные тесты;
-* тестирование репозиториев;
-* использование MockMvc;
-* использование Mockito.
-
----
-
-# Запуск проекта
-
-## Клонирование
+Нужны JDK 21, Docker Desktop и свободный порт 8080.
 
 ```bash
-git clone https://github.com/pochette/module-4-later-spring-only.git
-```
-
----
-
-## Сборка
-
-```bash
-mvn clean install
-```
-
----
-
-## Запуск
-
-```bash
-mvn spring-boot:run
-```
-
-или
-
-```bash
+mvn clean package -DskipTests
 docker compose up --build
 ```
 
-После запуска приложение доступно по адресу
+API: http://localhost:8080. PostgreSQL доступен на порту 6541.
 
+## API
+
+Текущий пользователь передаётся в заголовке `X-Sharer-User-Id`.
+
+| Ресурс | Эндпоинты |
+| --- | --- |
+| Пользователи | `POST /users`, `GET /users`, `GET /users/{id}`, `PATCH /users/{id}`, `DELETE /users/{id}` |
+| Вещи | `POST /items`, `PATCH /items/{id}`, `GET /items/{id}`, `GET /items` (вещи владельца), `GET /items/search?text=` |
+| Отзывы | `POST /items/{id}/comment` — только после завершённой аренды |
+| Бронирования | `POST /bookings`, `PATCH /bookings/{id}?approved=`, `GET /bookings/{id}`, `GET /bookings?state=`, `GET /bookings/owner?state=` |
+
+## Хранение данных
+
+Сущности: `User`, `Item`, `Booking`, `Comment`, `ItemRequest`. Статусы брони: `WAITING`, `APPROVED`, `REJECTED`.
+
+## Тестирование
+
+```bash
+mvn test
 ```
-http://localhost:8080
-```
 
----
+Юнит-тесты сервисного слоя на JUnit 5 и Mockito: добавление вещи и отзыва, получение по id, поиск и обработка отсутствующих сущностей. API дополнительно проверяется [Postman-коллекцией](postman/sprint.json).
 
-# Что было изучено
+## Автор
 
-Во время разработки проекта были освоены:
-
-* Java Core
-* Collections Framework
-* Stream API
-* Optional
-* Generics
-* REST API
-* Spring Boot
-* Spring MVC
-* Spring Data JPA
-* Hibernate ORM
-* PostgreSQL
-* H2 Database
-* Maven
-* Docker
-* Git
-* JUnit 5
-* Mockito
-* MockMvc
-* Валидация данных
-* Обработка исключений
-* DTO и маппинг
-* Проектирование многослойной архитектуры
-* Работа с SQL и ORM
-
----
-
-# Планы по развитию
-
-* JWT-аутентификация
-* Spring Security
-* OpenAPI (Swagger)
-* GitHub Actions (CI)
-* Testcontainers
-* Кэширование
-* Мониторинг (Actuator)
-* Логирование (SLF4J + Logback)
-
----
-
-# Автор
-
-**Андрей**
-
-Студент 3 курса направления **«Прикладная информатика»** Академия ИМСИТ, г. Краснодар 
-
-🎓  
-
-GitHub: https://github.com/pochette
+**Андрей Бурдак** — [GitHub](https://github.com/pochette) · [Telegram @burdak_aa](https://t.me/burdak_aa) · [burdak.andrew@gmail.com](mailto:burdak.andrew@gmail.com)
